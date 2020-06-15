@@ -1,0 +1,47 @@
+<!---->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="css/style.css">
+
+    <title>VueJS實作</title>
+</head>
+<body>
+    <div id="app">
+      <form action="" @submit.prevent="pushNewItem">
+        <label for="">
+          新增代辦事項：
+          <input 
+            type="text"
+            placeholder="enter something"
+            v-model="newItem"
+            required="required"
+          >
+          <input type="submit" value="新增">
+        </label>
+        <i>{{ newItem }}</i>
+        <hr>
+
+        <ul>
+          <li v-for="item in toDoList" style="list-style-type:none;">
+            <input 
+              type="checkbox"
+              :value="item"
+              v-model="DoneList"
+            >
+          {{ item | checkboxFormat }}
+          </li>
+        </ul>
+        <span>
+          <p>已完成項目(DoneList)：{{ doneString }}</p>
+        </span>
+      </form>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
+    <script src="js/all.js"></script>
+</body>
+</html>
