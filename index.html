@@ -5,43 +5,90 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/4.0.0/css/bootstrap.css">
     <link rel="stylesheet" href="css/style.css">
-
     <title>VueJS實作</title>
 </head>
 <body>
-    <div id="app">
-      <form action="" @submit.prevent="pushNewItem">
-        <label for="">
-          新增代辦事項：
-          <input 
-            type="text"
-            placeholder="enter something"
-            v-model="newItem"
-            required="required"
-          >
-          <input type="submit" value="新增">
-        </label>
-        <i>{{ newItem }}</i>
-        <hr>
-
-        <ul>
-          <li v-for="item in toDoList" style="list-style-type:none;">
-            <input 
-              type="checkbox"
-              :value="item"
-              v-model="DoneList"
-            >
-          {{ item | checkboxFormat }}
+  <div id="app">
+    <div class="input-group mb-3">
+      <div class="input-group-prepend">
+        <span class="input-group-text" id="basic-addon1">待辦事項</span>
+      </div>
+      <input type="text" class="form-control" placeholder="準備要做的任務" v-model="newTodo" @keyup.enter="addTodo">
+      <div class="input-group-append">
+        <button class="btn btn-primary" type="button" @click="addTodo">新增</button>
+      </div>
+    </div>
+    <div class="card text-center">
+      <div class="card-header">
+        <!-- 這個 active 是 Bootstrap4 內建的 css 樣式 -->
+        <!-- https://pjchender.blogspot.com/2015/04/bootstraptabsnavigation-bar.html -->
+        <ul class="nav nav-tabs card-header-tabs">
+          <li class="nav-item">
+            <!--  = 是賦予值； == 是比較  -->
+            <a class="nav-link" :class="{active : visibility == 'all'}" @click="visibility = 'all'" href="#">全部</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{active : visibility == 'active'}"  @click="visibility = 'active'" href="#">進行中</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" :class="{active : visibility == 'completed'}"  @click="visibility = 'completed'" href="#">已完成</a>
           </li>
         </ul>
-        <span>
-          <p>已完成項目(DoneList)：{{ doneString }}</p>
-        </span>
-      </form>
+      </div>
+      <ul class="list-group list-group-flush text-left">
+        <!-- key是陣列的索引位置 -->
+        <li class="list-group-item" v-for="(item , key) in filterTodos" @dblclick="editTodo(item)">
+          <div class="d-flex">
+            <div class="form-check" v-if="item.id !== cacheTodo.id">
+              <input type="checkbox" class="form-check-input" v-model="item.completed" :id="item.id">
+              <label class="form-check-label"
+              :class="{completed : item.completed}"
+              :for="item.id">
+                {{ item.title }}
+              </label>
+            </div>
+            <!-- aria-label="Close"
+            在下面的示例中，按钮（button）元素被定义为一个关闭（close）按钮，按钮中间有一个“X”字符。
+            辅助软件并不能知道X是什么意思，所以需要aria-label标签来为辅助设备提供相应的标识来告诉它这个button是close的作用。
+            -->
+            <button type="button" class="close ml-auto" aria-label="Close" @click="removeTodo(item)">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+          <input type="text" class="form-control"
+          v-model="cacheTitle"
+          @keyup.esc="cancelEdit"
+          @keyup.enter="doneEdit(item)"
+          v-if="item.id === cacheTodo.id">
+        </li>
+        <!-- <li class="list-group-item">
+          <div class="d-flex">
+            <div class="form-check">
+              <input type="checkbox" class="form-check-input" id="a1">
+              <label class="form-check-label completed" for="a1">
+                Cras justo odio
+              </label>
+            </div>
+            <button type="button" class="close ml-auto" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+            </button>
+          </div>
+        </li> -->
+        <!-- <li class="list-group-item">
+          <input type="text" class="form-control">
+        </li> -->
+      </ul>
+      <div class="card-footer d-flex justify-content-between">
+        <span>還有 {{ countNumber }} 筆任務未完成</span>
+        <a href="#" @click="clearAll">清除所有任務</a>
+      </div>
     </div>
-
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/1.0.18/vue.min.js"></script>
-    <script src="js/all.js"></script>
+  </div>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/vue/2.5.13/vue.js"></script>
+  <script src="js/all.js"></script>
 </body>
 </html>
